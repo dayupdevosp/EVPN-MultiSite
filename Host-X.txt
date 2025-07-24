@@ -1,0 +1,81 @@
+Host-X#show run
+! Command: show running-config
+! device: Host-X (vEOS, EOS-4.20.1F)
+!
+! boot system flash:/vEOS-lab.swi
+!
+transceiver qsfp default-mode 4x10G
+!
+hostname Host-X
+!
+spanning-tree mode mstp
+!
+no aaa root
+!
+vlan 10,20,30
+!
+vrf definition HOST-VLAN10
+   rd 1:10
+!
+vrf definition HOST-VLAN20
+!
+vrf definition HOST-VLAN30
+!
+interface Port-Channel1
+   switchport trunk allowed vlan 10,20,30
+   switchport mode trunk
+   spanning-tree link-type point-to-point
+!
+interface Ethernet1
+   channel-group 1 mode active
+!
+interface Ethernet2
+   channel-group 1 mode active
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Ethernet8
+!
+interface Management1
+!
+interface Vlan10
+   vrf forwarding HOST-VLAN10
+   ip address 192.168.10.20/24
+!
+interface Vlan20
+   vrf forwarding HOST-VLAN20
+   ip address 192.168.20.20/24
+!
+interface Vlan30
+   vrf forwarding HOST-VLAN30
+   ip address 192.168.30.20/24
+!
+ip route vrf HOST-VLAN20 0.0.0.0/0 192.168.20.254
+ip route vrf HOST-VLAN30 0.0.0.0/0 192.168.30.254
+ip route vrf HOST-VLAN10 0.0.0.0/0 192.168.10.254
+!
+ip routing
+no ip routing vrf HOST-VLAN20
+no ip routing vrf HOST-VLAN30
+no ip routing vrf HOST-VLAN10
+!
+router bgp 100
+   vrf HOST-VLAN10
+      rd 100:10
+   !
+   vrf HOST-VLAN20
+      rd 100:20
+   !
+   vrf HOST-VLAN30
+      rd 100:30
+!
+end
+Host-X#      
